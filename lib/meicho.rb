@@ -19,17 +19,16 @@ module Meicho
     end
   end
 
-  # erm.. median
   def self.median(arr = [])
     n = arr.length
     mid = n / 2
     return quickselect(arr, mid.floor) if n.odd?
 
-    (quickselect(arr, mid - 1) + quickselect(arr, mid)) / 2
+    (quickselect(arr, mid - 1) + quickselect(arr, mid)) / 2.0
   end
 
   def self.mean(arr = [], biased: true)
-    n = arr.length
+    n = arr.length.to_f
     return arr[0] if n == 1
 
     arr.reduce(:+) / (biased ? n : n - 1)

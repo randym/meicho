@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'test_helper'
 
 class KernelTest < Minitest::Test
@@ -8,8 +6,10 @@ class KernelTest < Minitest::Test
   end
 
   def test_gausian
-    assert_equal [0.3989422804014327, 2.9478068901215075, 21.781510479922122], arr.map { |v|
-                                                                                 Meicho::Kernel.gaussian(v)
-                                                                               }
+    actual = arr.map do |v|
+      Meicho::Kernel.gaussian(v)
+    end
+
+    assert_equal [0.3989422804014327, 0.05399096651318806, 0.007306882745280776], actual
   end
 end
