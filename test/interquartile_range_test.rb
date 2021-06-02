@@ -12,7 +12,7 @@ class InterquartileRangeTest < Minitest::Test
   end
 
   def test_q1
-    assert_equal 3, iqr.q1
+    assert_equal 2.5, iqr.q1
   end
 
   def test_q3
@@ -21,7 +21,7 @@ class InterquartileRangeTest < Minitest::Test
 
   def test_range
     # assert_equal 5, iqr.range
-    assert_equal 1.5, Meicho::InterquartileRange.new([1, 1, 1, 2, 3]).range
+    assert_equal 1, Meicho::InterquartileRange.new([1, 1, 1, 2, 3]).range
   end
 
   def test_tukey_both

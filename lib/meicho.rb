@@ -3,6 +3,8 @@ require 'meicho/interquartile_range'
 require 'meicho/kernel'
 require 'meicho/bandwidth'
 require 'meicho/kernel_density_estimator'
+require 'meicho/probability_density_function'
+require 'meicho/mann_whitney_u'
 module Meicho
   class Error < StandardError; end
 

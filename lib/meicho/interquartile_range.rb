@@ -22,11 +22,11 @@ module Meicho
     end
 
     def q1
-      @q1 ||= Meicho.median(members[0..mid.floor])
+      @q1 ||= Meicho.median(members[0..mid.floor - 1])
     end
 
     def q3
-      @q3 ||= Meicho.median(members[mid.ceil..-1])
+      @q3 ||= Meicho.median(members[mid.floor..-1])
     end
 
     def range

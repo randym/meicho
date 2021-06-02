@@ -1,11 +1,14 @@
 module Meicho
   class KernelDensityEstimator
-    def initialize(observations = [], step = 1)
-      @observations = observations
-      @step = step
+    def initialize(members = [], step = nil)
+      @members = members
+      @step = step || downfactor10
+      min = members.min - @step
+      max = members.max + @step
+      @points = (min..max).step(@step)
     end
 
-    attr_reader :observations, :step
+    attr_reader :members, :step, :points
 
     def pdf
       @pdf ||= estimate
@@ -13,24 +16,26 @@ module Meicho
 
     private
 
+    def downfactor10
+      @downfactor10 ||= (10.0**([Math.log10(Meicho.median(members)), 0.01].max.floor - 1))
+    end
+
     def bandwidth
-      @bandwidth ||= Meicho::Bandwidth.iterative_amise(observations.dup.sort)
+      @bandwidth ||= Meicho::Bandwidth.iterative_amise(members.dup.sort) || 0.1
     end
 
     def kernel(value)
       Meicho::Kernel.gaussian(value)
     end
 
-    def points
-      @points ||= (observations.min..observations.max).step(step).to_a
-    end
-
     def divisor
-      @divisor ||= observations.length * bandwidth
+      @divisor ||= members.length * bandwidth
     end
 
     def density_at(point)
-      observations.map { |observation| kernel((point - observation) / bandwidth) }.reduce(:+) / divisor
+      members.map do |member|
+        kernel((point - member) / bandwidth)
+      end.reduce(:+) / divisor
     end
 
     def estimate

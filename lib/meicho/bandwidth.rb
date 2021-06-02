@@ -4,7 +4,7 @@ module Meicho
     # plug-in estimator in the optimal AMISE estimator and an iterative algorithm
     # that solves R(f") for gaussian kernel improving on Sheather/Jones
     def self.iterative_amise(arr = []) # rubocop:disable Metrics/MethodLength
-      epsilon = 0.1
+      epsilon = 0.01
       n = arr.length
       h0 = normal_distribution_approximation(arr)
       h1 = h0 + epsilon
@@ -31,14 +31,14 @@ module Meicho
         h1 = (h0 + h1) / 2.0
       end
 
-      h1
+      h1.round(3)
     end
 
     def self.normal_distribution_approximation(arr = [])
       std = Meicho.std(arr)
       range = Meicho::InterquartileRange.new(arr).range / 1.34
       n = arr.length
-      (0.9 * [std, range].min * (n**(-1 / 5.0)))
+      (0.9 * [std, range].min * (n**(-1.0 / 5.0))).round(3)
     end
   end
 end
