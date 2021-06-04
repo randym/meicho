@@ -12,18 +12,18 @@ class BandwidthTest < Minitest::Test
   end
 
   def test_normal_distribution_approximation
-    assert_equal 2.452, Meicho::Bandwidth.normal_distribution_approximation(normal_arr)
+    assert_equal 2.656, Meicho::Bandwidth.normal_distribution_approximation(normal_arr)
   end
 
   def test_iterative_amise_against_normal
-    assert_equal 2.462, Meicho::Bandwidth.iterative_amise(normal_arr)
+    assert_equal 2.666, Meicho::Bandwidth.iterative_amise(normal_arr)
   end
 
   def test_normal_distribution_approximation_against_non_normal
-    assert_equal 2715.016, Meicho::Bandwidth.normal_distribution_approximation(long_tail_arr)
+    assert_equal 2922.904, Meicho::Bandwidth.normal_distribution_approximation(long_tail_arr)
   end
 
   def test_interative_amise_against_non_normal
-    assert_equal 704.2, Meicho::Bandwidth.iterative_amise(long_tail_arr)
+    assert_equal 704.196, Meicho::Bandwidth.iterative_amise(long_tail_arr)
   end
 end

@@ -13,27 +13,17 @@ module Meicho
     end
 
     def z_score
-      @z_score ||= ((u_score - (length_product / 2.0)) / u_std).to_f.round(2).abs
+      @z_score ||= ((u_score - (length_product / 2.0)) / u_std).to_f.round(2)
     end
 
-    # FZ(z)=12π‾‾‾√∫z−∞exp{−u22}du
-    def p
-      cumulative = integral = z_score * Math.exp(-0.5 * z_score**2) / Math.sqrt(2 * Math::PI)
-      last = 0
-      iteration = 2
-      while cumulative > last
-        last = cumulative
-        integral *= z_score**2 / iteration += 1
-        cumulative += integral
-      end
-
-      0.5 + cumulative
+    def p_value(tails = 2)
+      ((1 - Meicho.p_value(z_score.abs)) * tails).round(3)
     end
 
     private
 
-    def length_total
-      @length_total ||= first.length + second.length
+    def length_sum
+      @length_sum ||= first.length + second.length
     end
 
     def length_product
@@ -44,27 +34,24 @@ module Meicho
       return 0 unless ties.size
 
       ties.values.reduce(0) do |tie_count, sum|
-        sum + (tie_count**3 - tie_count) / (length_total * (length_total - 1.0))
+        sum + (tie_count**3 - tie_count) / (length_sum * (length_sum - 1.0))
       end
     end
 
     def u_std
-      return Math.sqrt((length_product * (length_total + 1)) / 12.0) unless ties.size
+      return Math.sqrt((length_product * (length_sum + 1)) / 12.0) unless ties.size
 
-      Math.sqrt((length_product / 12.0) * (length_total + 1 - tie_adjustment))
+      Math.sqrt((length_product / 12.0) * (length_sum + 1 - tie_adjustment))
     end
 
     def kernel(first_value, second_value)
       sign = first_value <=> second_value
 
-      if sign.zero?
-        ties[first_value] = (ties[first_value] || 0) + 1
-        return 0.5
-      end
-
       return 0 if sign == -1
+      return 1 if sign == 1
 
-      1.0
+      ties[first_value] = (ties[first_value] || 0) + 1
+      0.5
     end
 
     def calculate
@@ -74,6 +61,7 @@ module Meicho
           total += kernel(first_value, second_value)
         end
       end
+
       [total, length_product - total].min
     end
   end

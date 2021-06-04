@@ -21,6 +21,18 @@ module Meicho
     end
   end
 
+  def self.p_value(z_score)
+    n = 1
+    direction = z_score <=> 0
+    z = z_score.to_f * direction
+    distance = item = z * Meicho::Kernel.gaussian(z)
+    while item.positive?
+      item *= z**2 / (n += 2)
+      distance += item
+    end
+    (0.5 + distance * direction).round(4)
+  end
+
   def self.median(arr = [])
     n = arr.length
     mid = n / 2
@@ -44,5 +56,21 @@ module Meicho
 
   def self.std(arr = [])
     Math.sqrt(variance(arr))
+  end
+
+  #  https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm
+  def self.percentile(arr = [], value = 50)
+    members = arr.sort
+    n = members.length
+
+    p = value / 100.0
+    x = p * (n + 1)
+    k = x.truncate
+    d = x % 1
+
+    return members.first if k.zero?
+    return members.last if k >= n
+
+    members[k - 1] + d * (members[k] - members[k - 1])
   end
 end

@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+require 'bigdecimal'
 
 module Meicho
   class InterquartileRange
@@ -11,22 +11,18 @@ module Meicho
     end
 
     def tukey(tails = :both)
-      case tails
-      when :left
-        filter(left)
-      when :right
-        filter(right)
-      else
-        filter(both)
-      end
+      return filter(left) if tails == :left
+      return filter(right) if tails == :right
+
+      filter(both)
     end
 
     def q1
-      @q1 ||= Meicho.median(members[0..mid.floor - 1])
+      @q1 ||= Meicho.percentile(members, 25)
     end
 
     def q3
-      @q3 ||= Meicho.median(members[mid.floor..-1])
+      @q3 ||= Meicho.percentile(members, 75)
     end
 
     def range
@@ -36,10 +32,6 @@ module Meicho
     attr_reader :members
 
     private
-
-    def mid
-      @mid ||= members.length / 2.0
-    end
 
     def filter(lam)
       members.each_with_object([]) do |v, acc|

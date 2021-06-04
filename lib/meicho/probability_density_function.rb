@@ -35,7 +35,7 @@ module Meicho
       scaling_factor = scaled ? 1 / integrals.map { |_x, y| y }.max : 1
       scale = ->(value) { value * scaling_factor }
 
-      integrals.map { |x, y| [(x / every).round, scale.call(y)] }
+      integrals.map { |x, y| [(x / every).round, scale.call(y).round(2)] }
     end
 
     private
