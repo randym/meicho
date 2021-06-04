@@ -36,7 +36,7 @@ class IntegrationTest < Minitest::Test
   end
 
   def engagement_for(times = [])
-    Meicho::ProbabilityDensityFunction.new(times, 1000).integrate.map do |x, y|
+    Meicho::ProbabilityDensityFunction.new(times).integrate.map do |x, y|
       [(x / 1000.0).round, (y * 100).round]
     end
   end
